@@ -1,15 +1,18 @@
 <?php
-
+       ini_set("display_errors",1);
+       error_reporting(E_ALL);
 require_once "functions.php";
 require_once "config.php";
 
 $slug = "";
 
-if (isset($_SERVER['REQUEST_URI']) && slugMeetsRequirements($_SERVER['REQUEST_URI'])) {
-    $slug = substr(trim($_SERVER['REQUEST_URI'], "/"), 0, SLUG_LEN);
+        if (isset($_GET['GoToURL'])) {
+    // var_dump($_SERVER['REQUEST_URI']);
+   //  $slug = substr(trim($_SERVER['REQUEST_URI'], "/"), 0, 6);
+    $slug = ltrim($_GET['GoToURL'], DELETE_URL);
+    // var_dump($slug);
     goToUrl($slug);
 }
-
 if (isset($_POST['url']) && isset($_POST['password']) && $_POST['password'] === PASSWORD && urlIsCorrect($_POST['url']) && !urlAlreadyShortened($_POST['url'])) {
     $slug = addUrlToDatabase($_POST['url']);
     header("Location: " . BASE_URL . "/?slug=" . $slug);
@@ -36,14 +39,15 @@ if (isset($_GET['slug'])) {
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-
+         <input type="text" id="currencyVal" value="123" /> <button class="btn" onclick="copyvalue()">boo!</button><br />
+        
 <form class="form-shorten-url" action="index.php" method="post">
     <div class="text-center mb-4">
         <h1 class="h3 mb-3 font-weight-normal"><a href="https://link.that.ee" class="text-reset">URL shortener</a></h1>
         <p>Shorten urls. Github repo can be found here.</a></p>
     </div>
     <div class="form-label-group">
-        <input type="text" id="url"  name="url" class="form-control" placeholder="URL to shorten" required autofocus>
+        <input type="text" id="url"  name="url" class="form-control" placeholder="URL to shorten" required autofocus readonly>
         <label for="url">URL to shorten</label>
         <small id="urlHelp" class="form-text text-muted">Needs to begin with https:// or http://</small>
 
@@ -59,7 +63,7 @@ if (isset($_GET['slug'])) {
     <div class="form-label-group mb-3">
         <?php
         if (isset($_GET['slug'])) {
-            echo "Just created: <code>" . BASE_URL . "/$slug</code>";
+            echo "Just created: <code>" . BASE_URL . "/php-url-shortener-main/?GoToURL=$slug</code>";
         }
         ?>
     </div>
@@ -67,6 +71,18 @@ if (isset($_GET['slug'])) {
     <button class="btn btn-lg btn-primary btn-block" type="submit">Create</button>
 
 </form>
+    <script type="text/javascript">
 
+        let currencyval = document.getElementById("currencyVal");
+        let currencyCopy = document.getElementById("url");
+                var myStr = 'quick_brown_fox';
+        var newStr = myStr.replace(/_/g, "-");
+        
+        function copyvalue() {
+
+            currencyCopy.value = newStr; //currencyval.value;
+            console.log(currencyCopy.value);
+        }
+    </script>
 </body>
 </html>
